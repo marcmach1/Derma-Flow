@@ -4,6 +4,9 @@ using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 // Configura o banco e repositórios (IoC)
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -11,6 +14,9 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateUserCommand).Assembly));
 
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // O endpoint que você pediu
 app.MapPost("/users", async (CreateUserCommand command, IMediator mediator) =>

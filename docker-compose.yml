@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # Banco de Dados Postgres (O que faltava!)
+  database:
+    image: postgres:16 # Versão estável
+    container_name: dermaflow-db
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - mentalhealth-net
+    restart: unless-stopped
+
+  # Sua Aplicação .NET 9
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mentalhealth-api
+    ports:
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Host=database;Port=5432;Database=postgres;Username=postgres;Password=root
+    depends_on:
+      - database
+    networks:
+      - mentalhealth-net
+    restart: unless-stopped
+
+networks:
+  mentalhealth-net:
+    driver: bridge
