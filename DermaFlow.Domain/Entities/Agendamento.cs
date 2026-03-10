@@ -1,36 +1,46 @@
 using DermaFlow.Shared.Enums;
-namespace DermaFlow.Domain.Entities;
 
+namespace DermaFlow.Domain.Entities;
 
 public class Agendamento
 {
     public Guid Id { get; private set; }
-    public Guid ClienteId { get; private set; }
+    public Guid ClinicId { get; private set; } 
+    public Guid PacienteId { get; private set; } 
+    
+    // 1. Verifique se o nome é Paciente (em português) e se é PUBLIC
+    public Paciente Paciente { get; private set; } = null!;
+    
     public DateTime DataHora { get; private set; }
+    public DateTime DataHoraFim { get; private set; } 
+    
     public StatusAgendamento Status { get; private set; }
     public string? Observacoes { get; private set; }
 
-    
+    // 2. Verifique se a lista é Procedimentos (em português) e se é PUBLIC
+    private readonly List<Procedimento> _procedimentos = new();
+    public ICollection<Procedimento> Procedimentos => _procedimentos.AsReadOnly();
 
-    // Construtor para o EF Core
     protected Agendamento() { }
 
-    public Agendamento(Guid clienteId, DateTime dataHora)
+    public Agendamento(Guid clinicId, Guid pacienteId, DateTime dataHora)
     {
-        if (dataHora < DateTime.Now)
-            throw new ArgumentException("Não é possível agendar no passado.");
-
         Id = Guid.NewGuid();
-        ClienteId = clienteId;
+        ClinicId = clinicId;
+        PacienteId = pacienteId;
         DataHora = dataHora;
         Status = StatusAgendamento.Agendado;
     }
 
-    public void ConfirmarPresenca() => Status = StatusAgendamento.Confirmado;
-    
-    public void MarcarComoConcluido() 
+    public void AdicionarProcedimento(Procedimento procedimento)
     {
-        Status = StatusAgendamento.Concluido;
-        // Aqui poderíamos disparar um Domain Event para o n8n futuramente
+        _procedimentos.Add(procedimento);
+        RecalcularHorarioFim();
+    }
+
+    private void RecalcularHorarioFim()
+    {
+        var minutosTotais = _procedimentos.Sum(p => p.DuracaoMinutos);
+        DataHoraFim = DataHora.AddMinutes(minutosTotais);
     }
 }
