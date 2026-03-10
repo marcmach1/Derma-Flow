@@ -13,14 +13,22 @@ public class DermaFlowDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Configurações do User (Conforme solicitado: Nome, Telefone e Id)
+       
         modelBuilder.Entity<User>(entity => {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Nome).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Telefone).HasMaxLength(20);
+           
+            entity.Property(e => e.Name)
+                  .IsRequired()
+                  .HasMaxLength(100);
+
+            entity.Property(e => e.Email)
+                  .IsRequired()
+                  .HasMaxLength(150);
+
+            entity.Property(e => e.Password)
+                  .IsRequired();
         });
 
-        // Configurações do Agendamento
         modelBuilder.Entity<Agendamento>(entity => {
             entity.HasKey(e => e.Id);
         });
