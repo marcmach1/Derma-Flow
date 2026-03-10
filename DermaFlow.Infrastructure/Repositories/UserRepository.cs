@@ -14,18 +14,17 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public async Task<User?> GetByIdAsync(int id)
+    // 1. Adicionamos o 'CancellationToken ct' para bater com a Interface
+    public async Task<User?> ObterPorIdAsync(Guid id, CancellationToken ct)
     {
-        return await _context.Users.FindAsync(id);
-    }
-   
-    public async Task AddAsync(User user)
-    {
-        await _context.Users.AddAsync(user);
+        return await _context.Users.FindAsync(new object[] { id }, ct);
     }
 
-    public async Task SaveChangesAsync()
+    // 2. Mudamos para 'AdicionarAsync' e incluímos o 'ct'
+    public async Task<Guid> AdicionarAsync(User user, CancellationToken ct)
     {
-        await _context.SaveChangesAsync();
+        await _context.Users.AddAsync(user, ct);
+        await _context.SaveChangesAsync(ct);
+        return user.Id;
     }
 }

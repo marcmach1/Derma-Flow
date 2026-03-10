@@ -2,9 +2,10 @@ using MediatR;
 
 namespace DermaFlow.Application.Users.Commands;
 
-// Transformando em record, o C# cria o construtor de 3 argumentos automaticamente!
+// 1. Mude de 'Name' para 'Nome' (para bater com o request.Nome do Handler)
+// 2. Mude o retorno de 'int' para 'Guid' (para bater com o banco/repositório)
 public record CreateUserCommand(
-    string Name, 
+    string Nome, 
     string Email, 
     string Password
-) : IRequest<int>; // Retorna o ID do usuário criado
+) : IRequest<Guid>;

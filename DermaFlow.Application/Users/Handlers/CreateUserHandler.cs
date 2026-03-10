@@ -1,4 +1,3 @@
-// Local: DermaFlow.Application/Users/Handlers/CreateUserHandler.cs
 using MediatR;
 using DermaFlow.Application.Users.Commands;
 using DermaFlow.Application.Interfaces;
@@ -6,7 +5,7 @@ using DermaFlow.Domain.Entities;
 
 namespace DermaFlow.Application.Users.Handlers;
 
-public class CreateUserHandler : IRequestHandler<CreateUserCommand, int>
+public class CreateUserHandler : IRequestHandler<CreateUserCommand, Guid>
 {
     private readonly IUserRepository _repository;
 
@@ -15,11 +14,17 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, int>
         _repository = repository;
     }
 
-    public async Task<int> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateUserCommand request, CancellationToken ct)
     {
-        var user = new User { Name = request.Name, Email = request.Email };
-        await _repository.AddAsync(user);
-        await _repository.SaveChangesAsync();
-        return user.Id;
+        // Criação do objeto User
+        var user = new User 
+        { 
+            Id = Guid.NewGuid(), 
+            Name = request.Nome, 
+            Email = request.Email
+        }; // <-- O Ponto e vírgula aqui é VITAL!
+
+        // Agora sim, chamamos o repositório para salvar e retornar o Guid
+        return await _repository.AdicionarAsync(user, ct);
     }
 }

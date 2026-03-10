@@ -1,35 +1,45 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">DermaFlow.Client</a>
+        <a class="navbar-brand" href="">DermaFlow</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
 </div>
 
-<div class="nav-item px-3">
-    <NavLink class="nav-link" href="cadastro/usuario">
-        <span class="bi bi-person-plus-nav-menu" aria-hidden="true"></span> Novo Usuário
-    </NavLink>
-</div>
-
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="nav flex-column">
+        
+        @* Home / Dashboard *@
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </NavLink>
         </div>
+
+        <div class="dropdown-divider"></div>
+
+        @* Gestão de Usuários *@
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+            <NavLink class="nav-link" href="cadastro/usuario">
+                <span class="bi bi-person-plus-fill" aria-hidden="true"></span> Novo Usuário
             </NavLink>
         </div>
+
+        @* Gestão de Procedimentos *@
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
+            <NavLink class="nav-link" href="cadastro/procedimento">
+                <span class="bi bi-clipboard2-pulse-fill" aria-hidden="true"></span> Procedimentos
             </NavLink>
         </div>
+
+        @* Espaço para Listagens Futuras *@
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="configuracoes">
+                <span class="bi bi-gear-fill" aria-hidden="true"></span> Configurações
+            </NavLink>
+        </div>
+
     </nav>
 </div>
 

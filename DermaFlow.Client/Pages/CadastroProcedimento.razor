@@ -1,0 +1,51 @@
+@page "/cadastro/procedimento"
+@using DermaFlow.Shared.DTOs
+@inject HttpClient Http
+@inject NotificationService NotificationService
+
+<RadzenText TextStyle="TextStyle.H4" TagName="TagName.H1" Class="rz-my-4">
+    Novo Procedimento
+</RadzenText>
+
+<RadzenCard Variant="Variant.Flat">
+    <RadzenStack Gap="1rem">
+        <div>
+            <RadzenLabel Text="Nome" Component="Nome" />
+            <RadzenTextBox Name="Nome" @bind-Value="@novoProcedimento.Nome" Style="width: 100%;" />
+        </div>
+
+        <div>
+            <RadzenLabel Text="Preço (R$)" Component="Preco" />
+            <RadzenNumeric Name="Preco" @bind-Value="@novoProcedimento.Preco" Style="width: 100%;" TValue="decimal" />
+        </div>
+
+        <RadzenButton Text="Salvar no Postgres" Icon="save" Click="@Salvar" ButtonStyle="ButtonStyle.Primary" />
+    </RadzenStack>
+</RadzenCard>
+
+@code {
+    // IMPORTANTE: O "new()" evita a tela branca por Null Reference
+    private ProcedimentoDTO novoProcedimento = new();
+
+    async Task Salvar()
+    {
+        try 
+        {
+            var response = await Http.PostAsJsonAsync("api/procedimentos", novoProcedimento);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                NotificationService.Notify(NotificationSeverity.Success, "Sucesso", "Gravado no Railway!");
+                novoProcedimento = new(); // Limpa para o próximo
+            }
+            else
+            {
+                NotificationService.Notify(NotificationSeverity.Error, "Erro", "A API recusou os dados.");
+            }
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Erro de Conexão", ex.Message);
+        }
+    }
+}
