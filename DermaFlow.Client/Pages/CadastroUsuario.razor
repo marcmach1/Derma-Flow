@@ -1,0 +1,86 @@
+@page "/cadastro/usuario"
+@using DermaFlow.Shared.DTOs
+@using Radzen
+@inject HttpClient Http
+@inject NotificationService NotificationService
+
+<RadzenText TextStyle="TextStyle.H4" TagName="TagName.H1" Class="rz-mb-4">
+    Cadastro de Usuário - Derma Flow
+</RadzenText>
+
+<RadzenCard Variant="Variant.Flat" Style="max-width: 500px;">
+    <RadzenTemplateForm TItem="UserRequestDTO" Data="@usuario" Submit="@HandleSubmit">
+        <RadzenStack Gap="1rem">
+            
+            <RadzenFormField Text="Nome Completo" Variant="Variant.Outlined">
+                <RadzenTextBox @bind-Value="@usuario.Name" Name="Name" />
+                <RadzenRequiredValidator Component="Name" Text="O nome é obrigatório" />
+            </RadzenFormField>
+
+            <RadzenFormField Text="E-mail" Variant="Variant.Outlined">
+                <RadzenTextBox @bind-Value="@usuario.Email" Name="Email" />
+                <RadzenRequiredValidator Component="Email" Text="E-mail é obrigatório" />
+                <RadzenEmailValidator Component="Email" Text="Informe um e-mail válido" />
+            </RadzenFormField>
+
+            <RadzenFormField Text="Senha" Variant="Variant.Outlined">
+                <RadzenPassword @bind-Value="@usuario.Password" Name="Password" />
+                <RadzenRequiredValidator Component="Password" Text="A senha é obrigatória" />
+            </RadzenFormField>
+
+            <RadzenButton ButtonType="ButtonType.Submit" 
+                          Text="Salvar Usuário" 
+                          Icon="save" 
+                          ButtonStyle="ButtonStyle.Primary" 
+                          IsBusy="@isBusy" />
+        </RadzenStack>
+    </RadzenTemplateForm>
+</RadzenCard>
+
+@code {
+    private UserRequestDTO usuario = new();
+    private bool isBusy = false;
+
+    private async Task HandleSubmit()
+    {
+        isBusy = true;
+        try
+        {
+            // Enviando o DTO para a nossa API (aquele MapPost que testamos no Swagger)
+            var response = await Http.PostAsJsonAsync("users", usuario);
+
+            if (response.IsSuccessStatusCode)
+            {
+                NotificationService.Notify(new NotificationMessage 
+                { 
+                    Severity = NotificationSeverity.Success, 
+                    Summary = "Sucesso!", 
+                    Detail = "Usuário cadastrado no banco." 
+                });
+                usuario = new(); // Limpa o formulário
+            }
+            else
+            {
+                NotificationService.Notify(new NotificationMessage 
+                { 
+                    Severity = NotificationSeverity.Error, 
+                    Summary = "Erro", 
+                    Detail = "Não foi possível salvar." 
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(new NotificationMessage 
+            { 
+                Severity = NotificationSeverity.Error, 
+                Summary = "Erro de Conexão", 
+                Detail = ex.Message 
+            });
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+}
