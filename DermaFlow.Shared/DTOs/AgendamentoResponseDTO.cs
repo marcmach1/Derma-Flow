@@ -10,4 +10,5 @@ public class AgendamentoResponseDTO
     
     public string? Observacoes { get; set; }
     public string Status { get; set; } = "Agendado";
+    public string ProcedimentoNomes { get; set; } = string.Empty;
 }

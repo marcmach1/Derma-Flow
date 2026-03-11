@@ -15,16 +15,18 @@ public class ObterAgendamentosHandler : IRequestHandler<ObterAgendamentosQuery, 
 
     public async Task<List<AgendamentoResponseDTO>> Handle(ObterAgendamentosQuery request, CancellationToken ct)
     {
-        // Busca os dados via Repository (que está na Infrastructure)
         var agendamentos = await _repository.ListarTodosComPacientesAsync();
 
-        // Mapeia para o DTO que o Blazor espera
         return agendamentos.Select(a => new AgendamentoResponseDTO
         {
             Id = a.Id,
             DataHora = a.DataHora,
-            PacienteNome = a.Paciente?.Nome ?? "Paciente não identificado",
-            Status = "Agendado"
+            PacienteNome = a.Paciente?.Nome ?? "N/A",
+            Status = "Agendado", 
+            
+            ProcedimentoNomes = a.Procedimentos != null && a.Procedimentos.Any()
+                ? string.Join(", ", a.Procedimentos.Select(p => p.Nome))
+                : "Nenhum"
         }).ToList();
     }
 }

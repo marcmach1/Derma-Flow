@@ -15,11 +15,12 @@ public class AgendamentoRepository : IAgendamentoRepository
     }
 
     public async Task<List<Agendamento>> ListarTodosComPacientesAsync()
-{
-    return await _context.Agendamentos
-        .Include(a => a.Paciente) // Join do Postgres para trazer o Nome do Paciente
-        .AsNoTracking()
-        .OrderByDescending(a => a.DataHora)
-        .ToListAsync();
-}
+    {
+        return await _context.Agendamentos
+            .Include(a => a.Paciente)
+            .Include(a => a.Procedimentos) // Tenta carregar a lista diretamente
+            .AsNoTracking()
+            .OrderByDescending(a => a.DataHora)
+            .ToListAsync();
+    }
 }

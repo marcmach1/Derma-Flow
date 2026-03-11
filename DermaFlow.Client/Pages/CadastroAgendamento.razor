@@ -55,12 +55,17 @@
                                 AllowPaging="true" PageSize="8" Density="Density.Compact"
                                 AllowSorting="true" EmptyText="Nenhum agendamento encontrado.">
                     <Columns>
-                        <RadzenDataGridColumn TItem="AgendamentoResponseDTO" Property="DataHora" Title="Data/Hora" Width="150px">
+                        <RadzenDataGridColumn TItem="AgendamentoResponseDTO" Property="DataHora" Title="Data/Hora" Width="130px">
                             <Template Context="data">
                                 @data.DataHora.ToString("dd/MM HH:mm")
                             </Template>
                         </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="AgendamentoResponseDTO" Property="PacienteNome" Title="Paciente" />
+                        
+                        <RadzenDataGridColumn TItem="AgendamentoResponseDTO" Property="PacienteNome" Title="Paciente" Width="180px" />
+
+                        @* COLUNA ADICIONADA: Aqui é onde os nomes dos procedimentos aparecem *@
+                        <RadzenDataGridColumn TItem="AgendamentoResponseDTO" Property="ProcedimentoNomes" Title="Procedimentos" />
+
                         <RadzenDataGridColumn TItem="AgendamentoResponseDTO" Title="Status" Width="100px">
                             <Template Context="data">
                                 <RadzenBadge Text="Agendado" BadgeStyle="BadgeStyle.Success" />
@@ -102,7 +107,8 @@
     {
         try 
         {
-            model.ClinicId = Guid.Empty; // Ajustar conforme sua lógica de Clínica
+            // Nota: Se você tiver ID da Clínica dinâmico, substitua o Guid.Empty
+            model.ClinicId = Guid.Empty; 
 
             var response = await Http.PostAsJsonAsync("v1/agendamentos", model);
 
