@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DermaFlow.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CriarEstruturaAgendamentoCompleta : Migration
+    public partial class AddNullableClinicId : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,15 +15,7 @@ namespace DermaFlow.Infrastructure.Migrations
                 name: "ClinicId",
                 table: "Procedimentos",
                 type: "uuid",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
-
-            migrationBuilder.AddColumn<int>(
-                name: "DuracaoMinutos",
-                table: "Procedimentos",
-                type: "integer",
-                nullable: false,
-                defaultValue: 0);
+                nullable: true);
         }
 
         /// <inheritdoc />
@@ -31,10 +23,6 @@ namespace DermaFlow.Infrastructure.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "ClinicId",
-                table: "Procedimentos");
-
-            migrationBuilder.DropColumn(
-                name: "DuracaoMinutos",
                 table: "Procedimentos");
         }
     }

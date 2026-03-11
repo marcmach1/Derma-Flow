@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DermaFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(DermaFlowDbContext))]
-    [Migration("20260310172603_CriarEstruturaAgendamentoCompleta")]
-    partial class CriarEstruturaAgendamentoCompleta
+    [Migration("20260310233843_InitialReset")]
+    partial class InitialReset
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,27 +25,82 @@ namespace DermaFlow.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("AgendamentoProcedimento", b =>
+                {
+                    b.Property<Guid>("AgendamentoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProcedimentosId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("AgendamentoId", "ProcedimentosId");
+
+                    b.HasIndex("ProcedimentosId");
+
+                    b.ToTable("AgendamentoProcedimento");
+                });
+
             modelBuilder.Entity("DermaFlow.Domain.Entities.Agendamento", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ClienteId")
+                    b.Property<Guid>("ClinicId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("DataHora")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime>("DataHoraFim")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Observacoes")
                         .HasColumnType("text");
+
+                    b.Property<Guid>("PacienteId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PacienteId");
+
                     b.ToTable("Agendamentos");
+                });
+
+            modelBuilder.Entity("DermaFlow.Domain.Entities.Paciente", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ClinicId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Cpf")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Telefone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClinicId");
+
+                    b.ToTable("Pacientes");
                 });
 
             modelBuilder.Entity("DermaFlow.Domain.Entities.Procedimento", b =>
@@ -74,11 +129,9 @@ namespace DermaFlow.Infrastructure.Migrations
 
             modelBuilder.Entity("DermaFlow.Domain.Entities.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -100,6 +153,37 @@ namespace DermaFlow.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("AgendamentoProcedimento", b =>
+                {
+                    b.HasOne("DermaFlow.Domain.Entities.Agendamento", null)
+                        .WithMany()
+                        .HasForeignKey("AgendamentoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DermaFlow.Domain.Entities.Procedimento", null)
+                        .WithMany()
+                        .HasForeignKey("ProcedimentosId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DermaFlow.Domain.Entities.Agendamento", b =>
+                {
+                    b.HasOne("DermaFlow.Domain.Entities.Paciente", "Paciente")
+                        .WithMany("Agendamentos")
+                        .HasForeignKey("PacienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Paciente");
+                });
+
+            modelBuilder.Entity("DermaFlow.Domain.Entities.Paciente", b =>
+                {
+                    b.Navigation("Agendamentos");
                 });
 #pragma warning restore 612, 618
         }

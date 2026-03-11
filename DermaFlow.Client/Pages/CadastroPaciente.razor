@@ -1,0 +1,80 @@
+@page "/cadastro/paciente"
+@using DermaFlow.Shared.DTOs
+@inject HttpClient Http
+@inject NotificationService NotificationService
+@inject NavigationManager Navigation
+
+<RadzenText TextStyle="TextStyle.H4" TagName="TagName.H1" Class="rz-my-4">
+    Cadastro de Novo Paciente
+</RadzenText>
+
+<RadzenCard Variant="Variant.Flat">
+    <RadzenTemplateForm TItem="PacienteDTO" Data="@novoPaciente" Submit="@Salvar">
+        <RadzenStack Gap="1.5rem">
+            <RadzenRow>
+                <RadzenColumn Size="12" SizeMD="6">
+                    <RadzenLabel Text="Nome Completo" Component="Nome" />
+                    <RadzenTextBox Name="Nome" @bind-Value="@novoPaciente.Nome" Style="width: 100%;" />
+                    <RadzenRequiredValidator Component="Nome" Text="O nome é obrigatório" />
+                </RadzenColumn>
+
+                <RadzenColumn Size="12" SizeMD="6">
+                    <RadzenLabel Text="CPF" Component="Cpf" />
+                    <RadzenMask Mask="***.***.***-**" CharacterPattern="[0-9]" Name="Cpf" @bind-Value="@novoPaciente.Cpf" Style="width: 100%;" />
+                </RadzenColumn>
+            </RadzenRow>
+
+            <RadzenRow>
+                <RadzenColumn Size="12" SizeMD="6">
+                    <RadzenLabel Text="E-mail" Component="Email" />
+                    <RadzenTextBox Name="Email" @bind-Value="@novoPaciente.Email" Style="width: 100%;" />
+                    <RadzenEmailValidator Component="Email" Text="Informe um e-mail válido" />
+                </RadzenColumn>
+
+                <RadzenColumn Size="12" SizeMD="6">
+                    <RadzenLabel Text="Telefone/WhatsApp" Component="Telefone" />
+                    <RadzenMask Mask="(**) *****-****" CharacterPattern="[0-9]" Name="Telefone" @bind-Value="@novoPaciente.Telefone" Style="width: 100%;" />
+                </RadzenColumn>
+            </RadzenRow>
+
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="1rem" Class="rz-mt-4">
+                <RadzenButton ButtonType="ButtonType.Submit" Text="Salvar no Postgres" Icon="save" ButtonStyle="ButtonStyle.Primary" />
+                <RadzenButton ButtonType="ButtonType.Button" Text="Cancelar" ButtonStyle="ButtonStyle.Light" Click="@(() => Navigation.NavigateTo("/"))" />
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenTemplateForm>
+</RadzenCard>
+
+@code {
+    private PacienteDTO novoPaciente = new() 
+    { 
+        Id = Guid.NewGuid(),
+        ClinicId = Guid.Empty // Aqui depois pegaremos do login do usuário
+    };
+
+    async Task Salvar()
+    {
+        try 
+        {
+            // Chamando a rota v1 que acabamos de criar na API
+            var response = await Http.PostAsJsonAsync("v1/pacientes", novoPaciente);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                NotificationService.Notify(NotificationSeverity.Success, "Sucesso", "Paciente cadastrado com sucesso!");
+                
+                // Limpa o formulário para o próximo
+                novoPaciente = new() { Id = Guid.NewGuid(), ClinicId = Guid.Empty };
+            }
+            else
+            {
+                var erro = await response.Content.ReadAsStringAsync();
+                NotificationService.Notify(NotificationSeverity.Error, "Erro na API", erro);
+            }
+        }
+        catch (Exception ex)
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Erro de Conexão", ex.Message);
+        }
+    }
+}

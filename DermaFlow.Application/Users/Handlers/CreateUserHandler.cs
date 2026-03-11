@@ -20,8 +20,9 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, Guid>
         var user = new User 
         { 
             Id = Guid.NewGuid(), 
-            Name = request.Nome, 
-            Email = request.Email
+            Name = request.Name, 
+            Email = request.Email,
+            Password = request.Password
         }; // <-- O Ponto e vírgula aqui é VITAL!
 
         // Agora sim, chamamos o repositório para salvar e retornar o Guid

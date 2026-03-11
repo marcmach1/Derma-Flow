@@ -1,23 +1,25 @@
-using DermaFlow.Application.Interfaces;
 using DermaFlow.Domain.Entities;
+using DermaFlow.Application.Interfaces;
 using DermaFlow.Infrastructure.Context;
-
-
-namespace DermaFlow.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 public class AgendamentoRepository : IAgendamentoRepository
 {
     private readonly DermaFlowDbContext _context;
+    public AgendamentoRepository(DermaFlowDbContext context) => _context = context;
 
-    public AgendamentoRepository(DermaFlowDbContext context)
+    public async Task AdicionarAsync(Agendamento agendamento) 
     {
-        _context = context;
+        await _context.Agendamentos.AddAsync(agendamento);
+        await _context.SaveChangesAsync();
     }
 
-    public async Task<Guid> AdicionarAsync(Agendamento agendamento, CancellationToken ct)
-    {
-        await _context.Agendamentos.AddAsync(agendamento, ct);
-        await _context.SaveChangesAsync(ct);
-        return agendamento.Id;
-    }
+    public async Task<List<Agendamento>> ListarTodosComPacientesAsync()
+{
+    return await _context.Agendamentos
+        .Include(a => a.Paciente) // Join do Postgres para trazer o Nome do Paciente
+        .AsNoTracking()
+        .OrderByDescending(a => a.DataHora)
+        .ToListAsync();
+}
 }

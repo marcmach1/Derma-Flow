@@ -23,12 +23,13 @@ public class Agendamento
 
     protected Agendamento() { }
 
-    public Agendamento(Guid clinicId, Guid pacienteId, DateTime dataHora)
+    public Agendamento(Guid clinicId, Guid pacienteId, DateTime dataHora, string? observacoes)
     {
         Id = Guid.NewGuid();
         ClinicId = clinicId;
         PacienteId = pacienteId;
         DataHora = dataHora;
+        Observacoes = observacoes; // <--- Adicione esta linha
         Status = StatusAgendamento.Agendado;
     }
 

@@ -8,5 +8,7 @@ public interface IUserRepository
     Task<User?> ObterPorIdAsync(Guid id, CancellationToken ct);      
 
     // 2. Mantenha apenas este para Adicionar (que já salva e retorna o Guid)
-    Task<Guid> AdicionarAsync(User user, CancellationToken ct);          
+    Task<Guid> AdicionarAsync(User user, CancellationToken ct);   
+
+    Task<IEnumerable<User>> ListarTodosAsync(CancellationToken ct);       
 }

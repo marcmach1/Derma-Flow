@@ -23,7 +23,7 @@ public class CriarProcedimentoHandler : IRequestHandler<CriarProcedimentoCommand
             Nome = request.Nome,
             Preco = request.Preco,
             DuracaoMinutos = request.DuracaoMinutos,
-            ClinicId = request.ClinicId
+          //  ClinicId = request.ClinicId
         };
 
         // O Repositório (lá na Infrastructure) é quem vai saber usar o DbContext

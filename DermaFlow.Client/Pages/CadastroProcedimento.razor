@@ -31,7 +31,7 @@
     {
         try 
         {
-            var response = await Http.PostAsJsonAsync("api/procedimentos", novoProcedimento);
+            var response = await Http.PostAsJsonAsync("v1/procedimentos", novoProcedimento);
             
             if (response.IsSuccessStatusCode)
             {

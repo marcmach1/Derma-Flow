@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DermaFlow.Infrastructure.Migrations
 {
     [DbContext(typeof(DermaFlowDbContext))]
-    [Migration("20260310173355_EstruturaFinal")]
-    partial class EstruturaFinal
+    [Migration("20260311002347_FixProcedimentoEF")]
+    partial class FixProcedimentoEF
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -109,9 +109,6 @@ namespace DermaFlow.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ClinicId")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("DuracaoMinutos")
                         .HasColumnType("integer");
 
@@ -129,11 +126,9 @@ namespace DermaFlow.Infrastructure.Migrations
 
             modelBuilder.Entity("DermaFlow.Domain.Entities.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");

@@ -27,4 +27,12 @@ public class UserRepository : IUserRepository
         await _context.SaveChangesAsync(ct);
         return user.Id;
     }
+
+    public async Task<IEnumerable<User>> ListarTodosAsync(CancellationToken ct)
+    {
+        // Busca todos os usuários do banco usando o seu DbContext
+        return await _context.Users
+                            .AsNoTracking() // Dica: AsNoTracking é mais rápido para listagens
+                            .ToListAsync(ct);
+    }
 }

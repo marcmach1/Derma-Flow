@@ -47,7 +47,7 @@
         try
         {
             // Enviando o DTO para a nossa API (aquele MapPost que testamos no Swagger)
-            var response = await Http.PostAsJsonAsync("users", usuario);
+            var response = await Http.PostAsJsonAsync("/v1/users", usuario);
 
             if (response.IsSuccessStatusCode)
             {

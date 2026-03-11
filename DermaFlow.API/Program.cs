@@ -1,5 +1,6 @@
 using DermaFlow.Infrastructure.IoC;
 using DermaFlow.Application;
+using DermaFlow.API.EndPoints;
 using DermaFlow.API.Endpoints; // Certifique-se de importar o namespace das extensões
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,5 +28,7 @@ app.UseSwaggerUI();
 // A API agora apenas "habilita" os módulos de endpoints
 app.MapUserEndpoints();
 app.MapProcedimentoEndpoints();
+app.MapAgendamentoEndpoints();
+app.MapPacienteEndpoints(); // <-- Novo módulo de Pacientes
 
 app.Run("http://localhost:5253");
